@@ -1,0 +1,89 @@
+@charset "utf-8";
+/* CSS Document */
+
+
+/*Boton principal del index*/
+.btnNUEVO{
+height: 60px;
+width: 160px;
+background-color:dodgerblue;
+border-color:none;
+color: black;
+border-radius:10px;
+display: inline-block;
+cursor: pointer;
+border: 1px solid transparent;
+margin-right: 20px;
+margin-left: 30px;
+margin-top: 20px;
+margin-bottom: 20px;
+}
+
+.resaltar{
+box-shadow:1px 1px 10px #ccc;
+transition:.25s;
+}
+.resaltar:hover{
+	box-shadow:5px 5px 30px #333;
+	transition:.150s;
+}
+
+
+
+
+
+.rotacion{
+animation-name:rotar;
+animation-duration:8s;
+animation-iteration-count: infinite;
+animation-delay: 0s;
+}
+
+
+
+@keyframes rotar{
+0%{transform:rotate(0deg)}
+100%{transform: rotate(360deg)}
+}
+
+.Modi1{
+font-size: 50px;
+display: inline;
+font-family: sans-serif;
+font-style: initial;
+}
+
+body{
+background-color:snow;
+
+}
+
+
+
+
+.imgTam{
+height: 300px;
+width:350px;
+}
+
+.sep1{
+margin-top: 50px;
+margin-left: 0px;
+
+
+}
+
+
+/*Contatctos del index*/
+.contacto1{
+
+
+}
+
+.contacto2{
+
+
+}
+
+/*Fin Contactos del Index*/
+

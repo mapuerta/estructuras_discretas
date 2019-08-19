@@ -1,0 +1,11 @@
+@charset "utf-8";
+/* CSS Document */
+.texto_derecha{
+	float:left;
+	margin-right:10px;
+}
+
+.separar{
+	margin-top:20px;
+}
+
