@@ -1,0 +1,48 @@
+<!doctype html>
+<html>
+
+    <head>
+         <link rel="stylesheet" type="text/css"
+            href="{{ url_for('static', filename='css/bootstrap.css') }}">
+        <link rel="stylesheet" type="text/css"
+            href="{{ url_for('static', filename='libs/vis/dist/vis-network.min.css') }}">
+        <script type="text/javascript"
+            src="{{ url_for('static', filename='js/jquerylocal.min.js') }}">
+        </script>
+        <script type="text/javascript"
+            src="{{ url_for('static', filename='js/bootstrap.min.js') }}">
+        </script>
+        <script type="text/javascript"
+            src="{{ url_for('static', filename='libs/vis/dist/vis.js') }}">
+        </script>
+        <script type="text/javascript"
+            src="{{ url_for('static', filename='js/print_graph.js') }}">
+        </script>
+        <title>Estructuras Discretas 2</title>
+    </head>
+    <body>
+         <div class="container-fluid">
+              <div class="row">
+                  <div class="col-md-12">
+                        <div id="grapth_space"></div>
+                        <span class="hidden" id="graph_dot_data">{{dotdata}}</span>
+                    </div>
+                </div>
+        </div>
+        <script>
+            var DOTstring = $("#graph_dot_data").text()
+            var options = {
+                  nodes: {
+                      size:40,
+                      color: {
+                        background: '#006400'
+                      },
+                      font:{color:'#eeeeee', "size": 30},
+
+                    },
+                };
+              var container = document.querySelector('#grapth_space');
+              var graph = new PrintGraph(null, null, options).import_dot_data(container, DOTstring);
+        </script>
+    </body>
+</html>

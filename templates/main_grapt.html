@@ -2,12 +2,26 @@
 <html>
 
     <head>
-        <link href="vis/dist/vis-network.min.css" rel="stylesheet" type="text/css" />
-        <link rel="stylesheet" href="css/bootstrap.css" >
-        <script src="js/jquerylocal.min.js"></script>
-        <script src="js/bootstrap.min.js"></script>
-        <script type="text/javascript" src="vis/dist/vis.js"></script>
-        <script type="text/javascript" src="controller.js"></script>   
+        <head>
+         <link rel="stylesheet" type="text/css"
+            href="{{ url_for('static', filename='css/bootstrap.css') }}">
+        <link rel="stylesheet" type="text/css"
+            href="{{ url_for('static', filename='libs/vis/dist/vis-network.min.css') }}">
+        <script type="text/javascript"
+            src="{{ url_for('static', filename='js/jquerylocal.min.js') }}">
+        </script>
+        <script type="text/javascript"
+            src="{{ url_for('static', filename='js/bootstrap.min.js') }}">
+        </script>
+        <script type="text/javascript"
+            src="{{ url_for('static', filename='libs/vis/dist/vis.js') }}">
+        </script>
+        <script type="text/javascript"
+            src="{{ url_for('static', filename='js/print_graph.js') }}">
+        </script>
+        <script type="text/javascript"
+            src="{{ url_for('static', filename='js/controller.js') }}">
+        </script>
         <title>Estructuras Discretas 2</title>
     </head>
     
@@ -31,16 +45,22 @@
                       <div class="form-group">
                         <button type="button" class="btn btn-primary mr-2" id="graficate">Graficar</button>
                      </div>
+                        </br>
+                        </br>
+                        </br>
+                        </br>
+                        </br>
+                        </br>
+                        </br>
+                        </br>
+                      <div class="form-group">
+                        <button type="button" class="btn btn-primary mr-2 search_path" id="dfs_paths">DFS</button>
+                        <button type="button" class="btn btn-primary mr-2 search_path" id="bfs_paths">BFS</button>
+                     </div>
                 </div>
+                
             </div>
         </div>
-    </br>
-    </br>
-    </br>
-    </br>
-    </br>
-    </br>
-    </br>
     </br>
     </br>
     </br>

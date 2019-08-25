@@ -4,7 +4,25 @@ $( document ).ready(function() {
      function productDelete(ctl) {
         $(ctl.currentTarget).parents('tr').remove()
     }
-    
+    function post(path, parameters) {
+        var form = $('<form></form>');
+        form.attr("method", "post");
+        form.attr("action", path);
+        var field_count = $('<input></input>');
+        var count = 1;
+        $.each(parameters, function(key, value) {
+            debugger;
+                var field = $('<input></input>');
+                count += 1;
+                field.attr("type", "hidden");
+                field.attr("name", key);
+                field.attr("value", value);
+
+                form.append(field);
+            });
+            $(document.body).append(form);
+            form.submit();
+    }
     
     function addNode(table_id){
         
@@ -50,10 +68,9 @@ $( document ).ready(function() {
         tr.append(td_remove)
         table.find("tbody").append(tr)
     }
-
-    function create_grapth() {
+    
+    function get_table_nodes(){
         var nodes = [];
-        var edges = [];
         var table_nodes = $("#table_nodes tr input");
         table_nodes.each(function (index, item) {
             var value = $(item).val();
@@ -61,6 +78,11 @@ $( document ).ready(function() {
                 {'id':value, 'label': value}
             )
         });
+        return nodes;
+    }
+
+    function get_table_edges(){
+        var edges = [];
         var table_edges = $("#table_edges tr").not('.header_edges');
         table_edges.each(function (index, item) {
             var from_value = $(item).find('.edges_from select').val()
@@ -69,12 +91,13 @@ $( document ).ready(function() {
                 {'from':from_value, 'to': to_value}
             )
         });
+        return edges;
+    }
 
-        var options = {
-
-            font:{
-              size: 100,
-            },
+    function create_grapth() {
+        var nodes = get_table_nodes();
+        var edges = get_table_edges();
+        var graph_options = {
           nodes: {
               size:40,
               color: {
@@ -83,15 +106,10 @@ $( document ).ready(function() {
               font:{color:'#eeeeee', "size": 30},
 
             },
-
-      };
-        var data = {
-            nodes: nodes,
-            edges: edges,
         };
         var container = document.querySelector('#grapth_space');
- 
-        network = new vis.Network(container, data, options);
+        var graph = new PrintGraph(nodes, edges, graph_options);
+        graph.print_graph(container)
     }
             
     $("#add_node").click(function() {
@@ -102,6 +120,14 @@ $( document ).ready(function() {
     });
     $("#graficate").click(function() {
          create_grapth();
+    });
+    $(".search_path").click(function() {
+        var data = {
+            nodes: JSON.stringify(get_table_nodes()),
+            edges: JSON.stringify(get_table_edges()),
+            algorithm: $(this).attr('id'),
+        }
+        post("/process_root_graph", data);
     });
 
     
