@@ -15,10 +15,8 @@ def index():
 def process_root_graph(**kw):
     nodes = json.loads(request.form['nodes'])
     edges = json.loads(request.form['edges'])
-    #~ node_start = request.form['node_start']
-    node_start = "A"
-    #~ node_end = request.form['node_end']
-    node_end = "B"
+    node_start = request.form['node_start']
+    node_end = request.form['node_end']
     algorithm = request.form['algorithm']
     dotdata = SearchGraphPath(
         nodes, edges, node_start, node_end).get(algorithm)

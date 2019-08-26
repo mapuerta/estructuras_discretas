@@ -1,9 +1,31 @@
 $( document ).ready(function() {
     console.log( "ready!" );
 
-     function productDelete(ctl) {
+    var NODES_CLICK = [];
+
+    function delete_row(ctl) {
         $(ctl.currentTarget).parents('tr').remove()
     }
+    
+    function hadler_graph_click(params){
+        var current_node = params.nodes[0];
+        $('.search_path').addClass('hidden');
+        if (NODES_CLICK.includes(current_node)){
+            var node_index = NODES_CLICK.indexOf(current_node);
+            NODES_CLICK.pop(node_index)
+            return false;
+        }
+        if (NODES_CLICK.length == 2){
+            NODES_CLICK = [] 
+        }
+        NODES_CLICK.push(current_node);
+        if (NODES_CLICK.length == 2){
+            $('.search_path').removeClass('hidden')    
+        }
+        console.log("=============", NODES_CLICK)
+        
+    }
+
     function post(path, parameters) {
         var form = $('<form></form>');
         form.attr("method", "post");
@@ -11,7 +33,6 @@ $( document ).ready(function() {
         var field_count = $('<input></input>');
         var count = 1;
         $.each(parameters, function(key, value) {
-            debugger;
                 var field = $('<input></input>');
                 count += 1;
                 field.attr("type", "hidden");
@@ -35,7 +56,7 @@ $( document ).ready(function() {
                 "<span class='glyphicon glyphicon-remove' />" +
         "</a>")
         var td_remove = $('<td class="text-center">').append(act_remove);
-        act_remove.click(productDelete);
+        act_remove.click(delete_row);
         tr.append(td_input)
         tr.append(td_remove)
         table.find("tbody").append(tr)
@@ -62,7 +83,7 @@ $( document ).ready(function() {
                 "<span class='glyphicon glyphicon-remove' />" +
         "</a>")
         var td_remove = $('<td class="text-center">').append(act_remove);
-        act_remove.click(productDelete);
+        act_remove.click(delete_row);
         tr.append(td_select1)
         tr.append(td_select2)
         tr.append(td_remove)
@@ -95,6 +116,7 @@ $( document ).ready(function() {
     }
 
     function create_grapth() {
+        NODES_CLICK = [];
         var nodes = get_table_nodes();
         var edges = get_table_edges();
         var graph_options = {
@@ -110,6 +132,7 @@ $( document ).ready(function() {
         var container = document.querySelector('#grapth_space');
         var graph = new PrintGraph(nodes, edges, graph_options);
         graph.print_graph(container)
+        graph.delegateEvents('click', hadler_graph_click.bind(this))
     }
             
     $("#add_node").click(function() {
@@ -125,6 +148,8 @@ $( document ).ready(function() {
         var data = {
             nodes: JSON.stringify(get_table_nodes()),
             edges: JSON.stringify(get_table_edges()),
+            node_start: NODES_CLICK[0],
+            node_end: NODES_CLICK[1],
             algorithm: $(this).attr('id'),
         }
         post("/process_root_graph", data);

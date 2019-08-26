@@ -27,4 +27,11 @@ class PrintGraph {
         options = $.extend(options, this.options);
         this.network = new vis.Network(element, data, options);
     }
+    delegateEvents(event, hadler) {
+        if (!this.network){
+            return false;
+        }
+        var $el = this.network;
+        $el.on(event, hadler);
+    }
 }

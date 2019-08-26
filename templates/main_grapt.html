@@ -2,7 +2,16 @@
 <html>
 
     <head>
-        <head>
+         <style type="text/css">
+            body {
+                font: 10pt sans;
+            }
+            #grapth_space {
+                width: 600px;
+                height: 600px;
+                border: 1px solid lightgray;
+            }
+        </style>
          <link rel="stylesheet" type="text/css"
             href="{{ url_for('static', filename='css/bootstrap.css') }}">
         <link rel="stylesheet" type="text/css"
@@ -54,8 +63,8 @@
                         </br>
                         </br>
                       <div class="form-group">
-                        <button type="button" class="btn btn-primary mr-2 search_path" id="dfs_paths">DFS</button>
-                        <button type="button" class="btn btn-primary mr-2 search_path" id="bfs_paths">BFS</button>
+                        <button type="button" class="btn btn-primary mr-2 search_path hidden" id="dfs_paths">DFS</button>
+                        <button type="button" class="btn btn-primary mr-2 search_path hidden" id="bfs_paths">BFS</button>
                      </div>
                 </div>
                 

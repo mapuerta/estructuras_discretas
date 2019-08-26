@@ -2,6 +2,16 @@
 <html>
 
     <head>
+        <style type="text/css">
+            body {
+                font: 10pt sans;
+            }
+            #grapth_space {
+                width: 600px;
+                height: 600px;
+                border: 1px solid lightgray;
+            }
+        </style>
          <link rel="stylesheet" type="text/css"
             href="{{ url_for('static', filename='css/bootstrap.css') }}">
         <link rel="stylesheet" type="text/css"
@@ -32,7 +42,13 @@
         <script>
             var DOTstring = $("#graph_dot_data").text()
             var options = {
+                 layout: {
+                    hierarchical: {
+                        direction: "UD"
+                    }
+                },
                   nodes: {
+                      fixed:true,
                       size:40,
                       color: {
                         background: '#006400'

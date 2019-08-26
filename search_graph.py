@@ -39,21 +39,34 @@ class SearchGraphPath:
         return set(edges)
 
     def export_dot_data(self, graph):
-        Grafo = nx.Graph()
-        for nodes in graph:
-            for node in nodes:
-                Grafo.add_node(node)
-            Grafo.add_edge(*nodes)
-        write_dot(Grafo, "grid.dot")
+        write_dot(graph, "grid.dot")
         dot_string = open("grid.dot", 'r').read()
         return dot_string
+
+    def create_graph_dfs_paths(self, graph):
+        return
+
+    def create_graph_bfs_paths(self, graph):
+        graph = list(graph)
+        Grafo = nx.Graph()
+        for node in self.graph:
+            Grafo.add_node(node)
+        for edge in self.edges:
+            edge_from = edge['from']
+            edge_to = edge['to']
+            if [r for r in graph if len(set(r).intersection([edge_from, edge_to])) >= 2]:
+                Grafo.add_edge(edge_from, edge_to, color='red')
+            else:
+                Grafo.add_edge(edge_from, edge_to)
+        return Grafo
 
     def get(self, algorithm):
         func = self.dfs_paths
         if hasattr(self, algorithm):
             func = getattr(self, algorithm)
-        return self.export_dot_data(
-            func(self.node_start, self.node_end))
+        result = func(self.node_start, self.node_end)
+        graph = getattr(self, "create_graph_"+algorithm)(result)
+        return self.export_dot_data(graph)
 
     def dfs_paths(self, node_start, node_end):
         stack = [(node_start, [node_start])]
