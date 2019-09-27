@@ -1,32 +1,56 @@
 $( document ).ready(function() {
     console.log( "ready!" );
 
-    var NODES_CLICK = [];
+class Controller {
+    
+    constructor(options) {
+        this.nodes = {};
+        this.edges = [];
+        this.options = options || {};
+        this.print_graph = null;
+        this.NODES_CLICK = [];
+    }
 
-    function delete_row(ctl) {
+    delete_row(ctl) {
         $(ctl.currentTarget).parents('tr').remove()
     }
     
-    function hadler_graph_click(params){
+    get_table_edges(){
+        var edges = [];
+        var table_edges = $("#table_edges tr").not('.header_edges');
+        table_edges.each(function (index, item) {
+            var from_value = $(item).find('.edges_from select').val()
+            var to_value = $(item).find('.edges_to select').val();
+            edges.push(
+                {'from':from_value,
+                 'to': to_value,
+                 }
+            )
+        });
+        this.edges = edges;
+        return edges;
+    }
+    
+    hadler_graph_click(params){
         var current_node = params.nodes[0];
         $('.search_path').addClass('hidden');
-        if (NODES_CLICK.includes(current_node)){
-            var node_index = NODES_CLICK.indexOf(current_node);
-            NODES_CLICK.pop(node_index)
+        if (this.NODES_CLICK.includes(current_node)){
+            var node_index = this.NODES_CLICK.indexOf(current_node);
+            this.NODES_CLICK.pop(node_index)
             return false;
         }
-        if (NODES_CLICK.length == 2){
-            NODES_CLICK = [] 
+        if (this.NODES_CLICK.length == 2){
+            this.NODES_CLICK = [] 
         }
-        NODES_CLICK.push(current_node);
-        if (NODES_CLICK.length == 2){
+        this.NODES_CLICK.push(current_node);
+        if (this.NODES_CLICK.length == 2){
             $('.search_path').removeClass('hidden')    
         }
-        console.log("=============", NODES_CLICK)
+        console.log("=============", this.NODES_CLICK)
         
     }
 
-    function post(path, parameters) {
+    post(path, parameters) {
         var form = $('<form></form>');
         form.attr("method", "post");
         form.attr("action", path);
@@ -45,7 +69,7 @@ $( document ).ready(function() {
             form.submit();
     }
     
-    function addNode(table_id){
+    addNode(table_id){
         
         var table = $("#"+table_id);
         var tr = $('<tr/>');
@@ -56,13 +80,13 @@ $( document ).ready(function() {
                 "<span class='glyphicon glyphicon-remove' />" +
         "</a>")
         var td_remove = $('<td class="text-center">').append(act_remove);
-        act_remove.click(delete_row);
+        act_remove.click(this.delete_row.bind(this));
         tr.append(td_input)
         tr.append(td_remove)
         table.find("tbody").append(tr)
     }
-
-    function addEdges(table_id){
+    
+    addEdges(table_id){
         
         var table = $("#"+table_id);
         var tr = $('<tr/>');
@@ -83,14 +107,28 @@ $( document ).ready(function() {
                 "<span class='glyphicon glyphicon-remove' />" +
         "</a>")
         var td_remove = $('<td class="text-center">').append(act_remove);
-        act_remove.click(delete_row);
+        act_remove.click(this.delete_row.bind(this));
         tr.append(td_select1)
         tr.append(td_select2)
         tr.append(td_remove)
         table.find("tbody").append(tr)
     }
+
+    addPaths(table_id){
+        
+        var select_id = $("#"+table_id);
+        var select = $('<select></select>');
+        var options = []
+        $("td input").each(function (index, item) {
+            var value = $(item).val();
+            options.push({val : value, text: value})
+        });
+        $(options).each(function(index, item) {
+             select_id.append($("<option>").attr('value',this.val).text(this.text));
+        });
+    }
     
-    function get_table_nodes(){
+    get_table_nodes(){
         var nodes = [];
         var table_nodes = $("#table_nodes tr input");
         table_nodes.each(function (index, item) {
@@ -101,25 +139,48 @@ $( document ).ready(function() {
         });
         return nodes;
     }
-
-    function get_table_edges(){
-        var edges = [];
-        var table_edges = $("#table_edges tr").not('.header_edges');
-        table_edges.each(function (index, item) {
-            var from_value = $(item).find('.edges_from select').val()
-            var to_value = $(item).find('.edges_to select').val();
-            edges.push(
-                {'from':from_value, 'to': to_value}
-            )
-        });
-        return edges;
+    deleteEdge (data, callback){
+        var self = this;
+        var edges = []
+        $.each(this.edges, function(index, element){
+           if (element.id != data.edges[0]){
+               edges.push(element)
+            } 
+        })
+        this.edges = edges;
+        callback(data)
+    }
+    deleteNode (data, callback){
+        var self = this;
+        var nodes = []
+        $.each(this.nodes, function(index, element){
+           if (element.id != data.nodes[0]){
+               edges.push(element)
+            } 
+        })
+        this.nodes = nodes;
+        callback(data)
     }
 
-    function create_grapth() {
-        NODES_CLICK = [];
-        var nodes = get_table_nodes();
-        var edges = get_table_edges();
+
+    create_grapth() {
+        var self = this;
+        this.NODES_CLICK = [];
+        var nodes = this.get_table_nodes();
+        var edges = this.get_table_edges();
         var graph_options = {
+            interaction:{
+                hover:true},
+            manipulation: {
+                    enabled: false,
+                     addEdge: function (data, callback) {
+                         self.edges.push(data)
+                         callback(data)
+                    },
+                     deleteEdge: self.deleteEdge.bind(self),
+                     deleteNode: self.deleteNode.bind(self),
+                    
+                },
           nodes: {
               size:40,
               color: {
@@ -127,32 +188,64 @@ $( document ).ready(function() {
               },
               font:{color:'#eeeeee', "size": 30},
 
-            },
+            }
         };
+        this.nodes = nodes;
         var container = document.querySelector('#grapth_space');
-        var graph = new PrintGraph(nodes, edges, graph_options);
-        graph.print_graph(container)
-        graph.delegateEvents('click', hadler_graph_click.bind(this))
+        this.print_graph = new PrintGraph(nodes, edges, graph_options);
+        this.print_graph.print_graph(container)
+        //~ this.print_graph.delegateEvents('click', this.hadler_graph_click.bind(this))
+        $("#add_join_edges").removeClass('hidden')
+        $("#delete_join_edges").removeClass('hidden')
+        $("#selected_path").removeClass('hidden')
+        $("#input_from").removeClass('hidden')
+        $("#input_to").removeClass('hidden')
+        $("#lbl_input_to").removeClass('hidden')
+        $("#lbl_input_from").removeClass('hidden')
+        $('.search_path').removeClass('hidden') 
+        this.print_graph.network.setOptions({
+            nodes: {physics: false},
+            edges: {physics: false},
+        });
+        this.addPaths("input_from")
+        this.addPaths("input_to")
     }
-            
+}
+
+    var graph = new Controller();
+     
     $("#add_node").click(function() {
-         addNode("table_nodes");
+         graph.addNode("table_nodes");
     });
     $("#add_edges").click(function() {
-         addEdges("table_edges");
+         graph.addEdges("table_edges");
     });
     $("#graficate").click(function() {
-         create_grapth();
+         graph.create_grapth();
+    });
+    $("#add_join_edges").click(function() {
+         graph.print_graph.network.addEdgeMode();
+    });
+    $("#delete_join_edges").click(function() {
+         graph.print_graph.network.deleteSelected();
     });
     $(".search_path").click(function() {
+        var edges = [];
+        $.each(graph.edges, function(index, element){
+            var new_element = Object.assign({}, element);
+            new_element['to'] = element.from
+            new_element['from'] = element.to
+            edges.push(new_element)
+        });
+        edges = $.merge(graph.edges, edges);
         var data = {
-            nodes: JSON.stringify(get_table_nodes()),
-            edges: JSON.stringify(get_table_edges()),
-            node_start: NODES_CLICK[0],
-            node_end: NODES_CLICK[1],
+            nodes: JSON.stringify(graph.nodes),
+            edges: JSON.stringify(edges),
+            node_start: $("#input_from").val(),
+            node_end: $("#input_to").val(),
             algorithm: $(this).attr('id'),
         }
-        post("/process_root_graph", data);
+        graph.post("/process_root_graph", data);
     });
 
     

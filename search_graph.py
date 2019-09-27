@@ -1,4 +1,6 @@
 import networkx as nx
+import itertools
+import pprint
 try:
     import pygraphviz
     from networkx.drawing.nx_agraph import write_dot
@@ -23,6 +25,8 @@ class SearchGraphPath:
         self.edges = edges
         self.graph = {}
         self.create_graph()
+        print("Grafo variable self.graph")
+        pprint.pprint(self.graph)
 
     def create_graph(self):
         graph = {}
@@ -43,13 +47,32 @@ class SearchGraphPath:
         dot_string = open("grid.dot", 'r').read()
         return dot_string
 
+    def group_edges(self, edges):
+        last_node = False
+        result = []
+        for edge in edges:
+            if last_node:
+                result += [(last_node, edge)]
+            last_node = edge
+        return result
+
     def create_graph_dfs_paths(self, graph):
-        return
+        Grafo = nx.Graph()
+        graph = list(graph)
+        for node in set([n for r in graph for n in r]):
+            Grafo.add_node(node)
+        for edges in graph:
+            for edge in self.group_edges(edges):
+                Grafo.add_edge(edge[0], edge[1])
+        return Grafo
 
     def create_graph_bfs_paths(self, graph):
         graph = list(graph)
         Grafo = nx.Graph()
         for node in self.graph:
+            if node in [self.node_start, self.node_end]:
+                Grafo.add_node(node, color="red")
+                continue
             Grafo.add_node(node)
         for edge in self.edges:
             edge_from = edge['from']
@@ -77,7 +100,6 @@ class SearchGraphPath:
                     yield path + [next]
                 else:
                     stack.append((next, path + [next]))
-        return stack
 
     def bfs_paths(self, start, goal):
         queue = [(start, [start])]
@@ -88,4 +110,3 @@ class SearchGraphPath:
                     yield path + [next]
                 else:
                     queue.append((next, path + [next]))
-        return queue
